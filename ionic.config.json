@@ -1,0 +1,7 @@
+{
+  "name": "tesseract-wasm-react",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
