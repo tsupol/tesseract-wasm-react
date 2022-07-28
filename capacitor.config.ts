@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'tesseract.wasm.react',
   appName: 'tesseract-wasm-react',
   webDir: 'build',
   bundledWebRuntime: false
