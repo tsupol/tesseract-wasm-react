@@ -1,62 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { OCRClient } from "tesseract-wasm";
 
-function fileFromDropEvent(event:any) {
-  if (!event.dataTransfer) {
-    return null;
-  }
-  for (let i = 0; i < event.dataTransfer.items.length; i++) {
-    const item = event.dataTransfer.items[i];
-    const file = item.getAsFile();
-    if (file) {
-      return file;
-    }
-  }
-  return null;
-}
-
-function FileDropZone({ onDrop }:any) {
-  const [dragHover, setDragHover] = useState(false);
-
-  return (
-    <div
-      className={`FileDropZone ${dragHover ? 'is-hovered' : ''}`}
-      // className={classnames("FileDropZone", { "is-hovered": dragHover })}
-      onDragLeave={() => {
-        setDragHover(false);
-      }}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setDragHover(true);
-      }}
-      onDrop={(e) => {
-        e.preventDefault();
-        setDragHover(false);
-
-        const file = fileFromDropEvent(e);
-        if (file) {
-          onDrop(file);
-        }
-      }}
-    >
-      Drop an image here to OCR it
-      <div>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const files:any = e.target.files;
-            if (!files.length) {
-              return;
-            }
-            onDrop(files.item(0));
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
 function ProgressBar({ value }:any) {
   return (
     <div className="ProgressBar">
@@ -104,9 +48,8 @@ function formatOrientation(orientation:any) {
   return `${orientation.rotation}°`;
 }
 
-export function OCRDemoApp() {
+export function OCRDemoAppFromImage({ documentImage }:any) {
   const ocrClient = useRef<any>(null);
-  const [documentImage, setDocumentImage] = useState<any>(null);
   const [documentText, setDocumentText] = useState<any>(null);
   const [error, setError] = useState<any>(null);
   const [ocrProgress, setOCRProgress] = useState<any>(null);
@@ -156,7 +99,6 @@ export function OCRDemoApp() {
 
       try {
         setStatus("Loading image");
-        console.log('documentImage', documentImage);
         await ocr.loadImage(documentImage);
 
         const orientation = await ocr.getOrientation();
@@ -176,6 +118,7 @@ export function OCRDemoApp() {
         const text = await ocr.getText();
         setDocumentText(text);
       } catch (err) {
+        console.log('err', err);
         setError(err);
       } finally {
         setOCRProgress(null);
@@ -184,17 +127,6 @@ export function OCRDemoApp() {
     };
     doOCR();
   }, [documentImage]);
-
-  const loadImage = async (file:any) => {
-    try {
-      console.log('file', file);
-      const image = await createImageBitmap(file);
-      console.log('image', image);
-      setDocumentImage(image);
-    } catch {
-      setError(new Error("Could not read document image"));
-    }
-  };
 
   return (
     <div className="OCRDemoApp">
@@ -207,7 +139,6 @@ export function OCRDemoApp() {
           <b>Error:</b> {error.message}
         </div>
       )}
-      <FileDropZone onDrop={loadImage}/>
       {status !== null && <div>{status}…</div>}
       {ocrTime !== null && (
         <div>
