@@ -1,0 +1,27 @@
+platforms:
+  ios:
+    targets:
+      App:
+        incrementBuild: true
+        version: 0.1
+        productName: Tesseract WASM React
+        displayName: Tesseract WASM React
+
+        plist:
+          replace: false
+          entries:
+            - NSPhotoLibraryUsageDescription: need photo library access to get pictures from there
+            - NSCameraUsageDescription: need camera to take pictures for OCR
+
+
+  android:
+    incrementVersionCode: true
+
+    manifest:
+      - file: AndroidManifest.xml
+        target: manifest
+        inject: |
+          <!-- Video Camera -->
+          <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+          <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+          <uses-permission android:name="android.permission.CAMERA" />

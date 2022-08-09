@@ -4,23 +4,30 @@
 
 `npm install`
 
-then run build android
+then run build android/ios Native Platforms
 
 `ionic capacitor build android`
+`ionic capacitor build ios`
+
+then configure the project
+
+`npm run configure`
+
+now you can proceed to use AndroidStudio/XCode
 
 ## After edited the code
 
-update the code to the Android native platform.
+update the code to the Native Platforms.
 
 `npx cap sync`
 
-then run build android
-
-`ionic capacitor build android`
+now the code is updated. You now proceed in AndroidStudio/XCode
 
 ## Permissions
 
 Make sure you have these line in your `AndroidManifest.xml`
+
+Note: you should already have this from using `npm run configure` earlier.
 
 ```xml
 <!-- Video Camera -->

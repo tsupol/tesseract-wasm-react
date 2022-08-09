@@ -50,6 +50,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "configure": "npx trapeze run config.yml",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
     "eject": "react-scripts eject"
   },
@@ -73,6 +74,8 @@
   },
   "devDependencies": {
     "@capacitor/cli": "4.0.0",
+    "@capacitor/project": "^2.0.10",
+    "@trapezedev/configure": "^5.0.0",
     "autoprefixer": "^10.4.8",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.7"
