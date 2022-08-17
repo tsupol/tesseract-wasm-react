@@ -77,6 +77,7 @@
     "@capacitor/project": "^2.0.10",
     "@trapezedev/configure": "^5.0.0",
     "autoprefixer": "^10.4.8",
+    "eslint": "^8.22.0",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.7"
   },

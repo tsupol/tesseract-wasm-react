@@ -4,16 +4,16 @@ import './Tesseract.css';
 import Webcam from 'react-webcam';
 import { OCRDemoAppFromImage } from '../components/TesseractComponentCamera';
 
+// for dimensions see: https://webcamtests.com/resolution
 const videoConstraints = {
-  width: { min: 640, ideal: 960, max: 960 },
-  height: { min: 640, ideal: 640, max: 960 },
+  width: { min: 960 },
+  height: { min: 600, ideal: 960 },
 };
 
 // --------------------------------------------------------------------------------
 // Page
 // --------------------------------------------------------------------------------
 const TesseractPage: React.FC = () => {
-
 
   const [currentDeviceId, setCurrentDeviceId] = useState<any>(0);
   const [devices, setDevices] = useState<any>([]);
@@ -54,6 +54,7 @@ const TesseractPage: React.FC = () => {
   useEffect(() => {
     if (image) {
       const setBitmap = async () => {
+        console.log('image (input to OCR)', refImage.current);
         setBitmapImage(await createImageBitmap(refImage.current));
       };
       setBitmap();
@@ -74,11 +75,18 @@ const TesseractPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen className="">
-        <div className="w-full max-w-2xl mx-auto p-3 bg-white bg-opacity-5">
+      <div className="hidden fixed w-auto h-auto">
+        <div className="hidden">
+          <img ref={refImage} src={image}/>
+        </div>
+      </div>
+
+      <IonContent fullscreen className="ion-padding">
+        <div className="">
           <Webcam
             ref={webcamRef}
             audio={false}
+            forceScreenshotSourceSize={true}
             videoConstraints={{
               ...videoConstraints,
               deviceId: devices[currentDeviceId].deviceId
@@ -92,12 +100,16 @@ const TesseractPage: React.FC = () => {
             Toggle Camera
           </IonButton>
           <IonButton color="success" onClick={capture}>Capture</IonButton>
-          <div className="hidden">
-            <img ref={refImage} src={image}/>
-          </div>
+
           {/*<IonImg ref={refImage} src={image}></IonImg>*/}
           {image && refImage && (
-            <OCRDemoAppFromImage documentImage={bitmapImage}/>
+            <>
+              <div className="border p-2 my-4">
+                <div className="text-sm text-gray-400">input dimensions:</div>
+                <div>{`${refImage.current.height} x ${refImage.current.width}`}</div>
+              </div>
+              <OCRDemoAppFromImage documentImage={bitmapImage}/>
+            </>
           )}
         </div>
       </IonContent>

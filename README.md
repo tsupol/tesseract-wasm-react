@@ -7,6 +7,7 @@
 then run build android/ios Native Platforms
 
 `ionic capacitor build android`
+
 `ionic capacitor build ios`
 
 then configure the project
