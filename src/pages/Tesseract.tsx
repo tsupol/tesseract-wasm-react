@@ -4,10 +4,14 @@ import './Tesseract.css';
 import Webcam from 'react-webcam';
 import { OCRDemoAppFromImage } from '../components/TesseractComponentCamera';
 
+const FACING_MODE_USER = "user";
+const FACING_MODE_ENVIRONMENT = "environment";
+
 // for dimensions see: https://webcamtests.com/resolution
 const videoConstraints = {
-  width: { min: 960 },
+  width: { min: 960, ideal: 1280 },
   height: { min: 600, ideal: 960 },
+  facingMode: FACING_MODE_ENVIRONMENT,
 };
 
 // --------------------------------------------------------------------------------
@@ -21,20 +25,29 @@ const TesseractPage: React.FC = () => {
   const [image, setImage] = useState<any>(null);
   const webcamRef = useRef<any>(null);
   const refImage = useRef<any>(null);
+  const [facingMode, setFacingMode] = React.useState(FACING_MODE_ENVIRONMENT);
 
   const ref = useRef();
   const handleDevices = React.useCallback(
-    mediaDevices =>
+    mediaDevices => {
       setDevices(mediaDevices.filter((v: any) => {
         if (v.label === 'OBS Virtual Camera') return false;
         return v.kind === "videoinput";
-      })),
-    [setDevices]
-  );
+      }));
+    }, [setDevices]);
 
   useIonViewWillEnter(() => {
     // don't want to remember the name
   });
+
+  const toggleCamera = React.useCallback(() => {
+    setFacingMode(
+      prevState =>
+        prevState === FACING_MODE_USER
+          ? FACING_MODE_ENVIRONMENT
+          : FACING_MODE_USER
+    );
+  }, []);
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(handleDevices);
@@ -47,9 +60,6 @@ const TesseractPage: React.FC = () => {
     },
     [webcamRef]
   );
-  const toggleCamera = () => {
-    setCurrentDeviceId((prev: number) => (prev + 1) % devices.length);
-  };
 
   useEffect(() => {
     if (image) {
@@ -89,13 +99,14 @@ const TesseractPage: React.FC = () => {
             forceScreenshotSourceSize={true}
             videoConstraints={{
               ...videoConstraints,
-              deviceId: devices[currentDeviceId].deviceId
+              facingMode,
+              // deviceId: devices[currentDeviceId].deviceId
             }}/>
           <div className="text-sm">{devices[currentDeviceId].label}</div>
           <IonButton
             color="primary"
             onClick={toggleCamera}
-            disabled={devices?.length <= 1}
+            // disabled={devices?.length <= 1}
           >
             Toggle Camera
           </IonButton>
@@ -112,6 +123,7 @@ const TesseractPage: React.FC = () => {
             </>
           )}
         </div>
+
       </IonContent>
     </IonPage>
   );
