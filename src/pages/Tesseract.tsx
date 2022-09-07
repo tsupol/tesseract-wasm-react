@@ -121,8 +121,9 @@ const TesseractPage: React.FC = () => {
         <div className="hidden">
           <img ref={refImage} src={image}/>
           <img ref={refImage2} src={image2}/>
-
-          
+          <div style={{maxWidth: 100}}>
+            <canvas ref={refCanvas} className="z-10 w-full" id="the-canvas"></canvas>
+          </div>
         </div>
       </div>
 
@@ -138,10 +139,6 @@ const TesseractPage: React.FC = () => {
       <IonContent fullscreen className="ion-padding">
 
         {/* --- place canvas here for debug --- */}
-
-        <div style={{maxWidth: 100}}>
-          <canvas ref={refCanvas} className="z-10 w-full" id="the-canvas"></canvas>
-        </div>
 
         <div className="max-w-md mx-auto">
           <Webcam
