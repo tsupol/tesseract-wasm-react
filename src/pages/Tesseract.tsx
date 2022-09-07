@@ -23,11 +23,13 @@ const TesseractPage: React.FC = () => {
   const [devices, setDevices] = useState<any>([]);
   const [bitmapImage, setBitmapImage] = useState<any>(null);
   const [image, setImage] = useState<any>(null);
+  const [image2, setImage2] = useState<any>(null);
   const webcamRef = useRef<any>(null);
+  const refCanvas = useRef<any>(null);
   const refImage = useRef<any>(null);
+  const refImage2 = useRef<any>(null);
   const [facingMode, setFacingMode] = React.useState(FACING_MODE_ENVIRONMENT);
 
-  const ref = useRef();
   const handleDevices = React.useCallback(
     mediaDevices => {
       setDevices(mediaDevices.filter((v: any) => {
@@ -63,36 +65,85 @@ const TesseractPage: React.FC = () => {
 
   useEffect(() => {
     if (image) {
-      const setBitmap = async () => {
-        console.log('image (input to OCR)', refImage.current);
-        setBitmapImage(await createImageBitmap(refImage.current));
-      };
-      setBitmap();
+      draw();
+      setImage2(refCanvas.current.toDataURL())
     }
   }, [image]);
 
+  useEffect(() => {
+    if (image) {
+      const setBitmap = async () => {
+        console.log('image (input to OCR)', refImage.current);
+        // setBitmapImage(await createImageBitmap(refCanvas.current.toDataURL()));
+        setBitmapImage(await createImageBitmap(refImage2.current));
+      };
+      setBitmap();
+    }
+  }, [image2]);
+
+  // Canvas
+  // ----------------------------------------
+
+  const draw = () => {
+    const canvas = refCanvas.current;
+    const ctx = refCanvas.current.getContext('2d');
+    const imageReal = refImage.current;
+
+    ctx.canvas.width = refImage.current.width;
+    ctx.canvas.height = refImage.current.height;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Note! don't flip at all but works like a charm
+    ctx.drawImage(imageReal,0,0,canvas.width,canvas.height);
+
+    // const degrees = 0;
+    // ctx.save();
+    // ctx.translate(canvas.width / 2, canvas.height / 2);
+    // ctx.rotate(degrees * Math.PI / 180);
+    // ctx.drawImage(imageReal, -imageReal.width / 2, -imageReal.width / 2);
+    // ctx.restore();
+  };
 
   if (!devices.length) return null;
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonMenuButton/>
-          </IonButtons>
-          <IonTitle>Tesseract WASM</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      {/*<IonHeader>*/}
+      {/*  <IonToolbar>*/}
+      {/*    <IonButtons slot="start">*/}
+      {/*      <IonMenuButton/>*/}
+      {/*    </IonButtons>*/}
+      {/*    <IonTitle>Tesseract WASM</IonTitle>*/}
+      {/*  </IonToolbar>*/}
+      {/*</IonHeader>*/}
 
       <div className="hidden fixed w-auto h-auto">
         <div className="hidden">
           <img ref={refImage} src={image}/>
+          <img ref={refImage2} src={image2}/>
+
+          
         </div>
       </div>
 
+
+      {/* --- for showing the image --- */}
+      {/*<div className=" w-auto h-auto">*/}
+      {/*  /!*<div className="hidden">*!/*/}
+      {/*  <img ref={refImage} src={image}/>*/}
+      {/*  /!*</div>*!/*/}
+      {/*</div>*/}
+
+
       <IonContent fullscreen className="ion-padding">
-        <div className="">
+
+        {/* --- place canvas here for debug --- */}
+
+        <div style={{maxWidth: 100}}>
+          <canvas ref={refCanvas} className="z-10 w-full" id="the-canvas"></canvas>
+        </div>
+
+        <div className="max-w-md mx-auto">
           <Webcam
             ref={webcamRef}
             audio={false}
@@ -111,6 +162,7 @@ const TesseractPage: React.FC = () => {
             Toggle Camera
           </IonButton>
           <IonButton color="success" onClick={capture}>Capture</IonButton>
+
 
           {/*<IonImg ref={refImage} src={image}></IonImg>*/}
           {image && refImage && (
